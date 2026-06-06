@@ -10,7 +10,7 @@ limits, session timing, and live git state for the current workspace.
 ┋ ◢◤ claude_code ◥◣ ┋
 m: Sonnet 4.6 (200k Context) | e: medium | c: ▓▓▓░░░░░░░ 30%
 cs: 12m | s: 5% | w: 2% | r: 4hr 48m
-d: ~/Projects/my-app | b: main ✓ | +12 | -3
+d: ~/projects/my-app | b: main ✓ | +12 | -3
 ```
 
 | Field | Meaning |
@@ -69,7 +69,7 @@ When cloning this repo on a new computer, two paths need to change:
    ```
    C:\Users\<that-machine-username>\.claude\statusline.js
    ```
-   Do **not** use `rober` — use the actual username on that device.
+   Use the actual username on that device.
 
 2. **settings.json command path** — the `"command"` value must also point to the
    correct path on that machine:
