@@ -13,16 +13,6 @@ const red    = s => `\x1b[31m${s}${R}`;
 const bold   = s => `\x1b[1m${s}${R}`;
 const cyan   = s => `\x1b[36m${s}${R}`;
 
-// ── Read stdin ────────────────────────────────────────────────────────────────
-function readStdin() {
-  try {
-    const raw = fs.readFileSync(0, 'utf8').trim();
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
-}
-
 // ── Read settings.json for fallback effortLevel ───────────────────────────────
 function readSettings() {
   try {
@@ -174,8 +164,10 @@ function pct(val) {
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
-(function main() {
-  const data     = readStdin();
+let _raw = '';
+process.stdin.on('data', chunk => _raw += chunk);
+process.stdin.on('end', () => {
+  const data     = _raw ? (() => { try { return JSON.parse(_raw); } catch { return {}; } })() : {};
   const settings = readSettings();
 
   // Write raw payload for inspection — remove once everything looks right.
@@ -195,7 +187,7 @@ function pct(val) {
   const modelLabel = ctxSzLabel ? `${modelName} (${ctxSzLabel} Context)` : modelName;
 
   // ── Effort ────────────────────────────────────────────────────────────────
-  const effort = get(data, 'effortLevel') || settings.effortLevel || 'n/a';
+  const effort = get(data, 'effort', 'level') || 'n/a';
 
   // ── Context window bar (percentage only, size moved to model line) ────────
   const ctxPct = pct(get(data, 'context_window', 'used_percentage'));
@@ -241,4 +233,4 @@ function pct(val) {
 
   // ── Output ────────────────────────────────────────────────────────────────
   console.log([header, line2, line3, line4].join('\n'));
-})();
+});

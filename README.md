@@ -4,6 +4,16 @@ A custom Claude Code status line for Windows, written in Node.js. Replaces the
 default Claude Code footer with a four-line panel showing model info, rate
 limits, session timing, and live git state for the current workspace.
 
+> **Where this works:** Claude Code running in a terminal (VS Code integrated
+> terminal, Windows Terminal, PowerShell, etc.). It does **not** apply to the
+> Claude Code VS Code extension's chat panel — that panel has its own UI and
+> does not render a terminal status line.
+>
+> **Git Bash requirement:** On Windows, Claude Code routes status line commands
+> through Git Bash. Git Bash must be installed, and paths in `settings.json`
+> must use forward slashes or `~` — backslashes are treated as escape characters
+> and silently break the command.
+
 ## What it shows
 
 ```
@@ -44,13 +54,17 @@ Open `C:\Users\<yourname>\.claude\settings.json` and add (or merge) this block:
 {
   "statusLine": {
     "type": "command",
-    "command": "node C:\\Users\\<yourname>\\.claude\\statusline.js"
+    "command": "node ~/.claude/statusline.js"
   }
 }
 ```
 
-Replace `<yourname>` with your Windows username. Save the file, then restart
-Claude Code — the custom status line will appear at the bottom of every session.
+Save the file, then restart Claude Code — the custom status line will appear at
+the bottom of every session.
+
+> **Use `~` or forward slashes in the path.** Claude Code runs this command
+> through Git Bash on Windows. Backslash paths (e.g. `C:\\Users\\...`) are
+> treated as escape sequences by Git Bash and will silently fail.
 
 ### Requirements
 
@@ -71,16 +85,10 @@ When cloning this repo on a new computer, two paths need to change:
    ```
    Use the actual username on that device.
 
-2. **settings.json command path** — the `"command"` value must also point to the
-   correct path on that machine:
+2. **settings.json command path** — use `~` so it resolves automatically
+   regardless of username:
    ```json
-   "command": "node C:\\Users\\<that-machine-username>\\.claude\\statusline.js"
+   "command": "node ~/.claude/statusline.js"
    ```
-
-Both places must match the real user home on that device. If you use `~` in the
-command on a system where it resolves correctly (e.g. macOS/Linux or a
-PowerShell profile that sets `HOME`), you can simplify to:
-```json
-"command": "node ~/.claude/statusline.js"
-```
-But on Windows this is not always guaranteed — the explicit path is safer.
+   Claude Code runs this through Git Bash on Windows, and `~` expands correctly
+   there. Avoid backslash paths — Git Bash treats them as escape characters.
